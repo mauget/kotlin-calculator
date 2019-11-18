@@ -1,2 +1,2 @@
 # kotlin-calculator
-A desktop calculator rendered in Kotline and TornadoFx
+A desktop calculator rendered in Kotlin and TornadoFx
