@@ -1,5 +1,6 @@
 package com.rogersalumni.calculator.desktop
 
+import javafx.geometry.Pos
 import javafx.scene.control.TextField
 import tornadofx.*
 
@@ -16,9 +17,13 @@ class DesktopView : View() {
         hbox {
             calcTextField = textfield("0") {
                 requestFocus()
+
                 textProperty().addListener { evt, _, _ ->
                     println(evt.value)
                 }
+
+                alignmentProperty().set(Pos.CENTER_RIGHT)
+
                 style {
                     backgroundColor += Styles.operationBgDarkColor
                     textFill = Styles.fontColor
