@@ -8,7 +8,7 @@ class DesktopView : View() {
     private var expression: String = ""
 
     private val controller = DesktopController()
-    private val opCodes = setOf("+", "-", "*", "/", "(", ")", "%", "uminus")
+    private val opCodes = setOf("+", "-", "*", "/", "(", ")", "%", "%")
 
     override val root = vbox {
         addClass(Styles.wrapper)
@@ -42,7 +42,7 @@ class DesktopView : View() {
                     accept("uminus")
                 }
             }
-            button("mod") {
+            button("%") {
                 style {
                     fontSize = 28.px
                     backgroundColor += Styles.operationBgDarkColor
@@ -167,6 +167,9 @@ class DesktopView : View() {
 
     init {
         this.title = "Calculator"
+
+        primaryStage.icons.add(resources.image("/Calculator-icon.png"))
+
         this.resetCalculator()
     }
 
@@ -201,7 +204,6 @@ class DesktopController : Controller() {
 class DesktopApp : App(DesktopView::class, Styles::class) {
 
     companion object {
-//        fun create(): DesktopApp = DesktopApp()
     }
 
     init {
