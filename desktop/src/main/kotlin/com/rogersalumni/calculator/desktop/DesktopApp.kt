@@ -203,12 +203,12 @@ class DesktopController : Controller() {
 
 class DesktopApp : App(DesktopView::class, Styles::class) {
 
-    companion object {
-    }
+    companion object;
 
     init {
         reloadStylesheetsOnFocus()
     }
+
 }
 
 fun main() {
