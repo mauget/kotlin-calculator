@@ -4,23 +4,74 @@ import javafx.geometry.Pos
 import javafx.scene.control.TextField
 import tornadofx.*
 
+// Dual: can form arithmetic operand as well as being render-able
+private const val uMinus = "-"
+private const val opAdd = "+"
+private const val opSub = "-"
+private const val opMul = "*"
+private const val opDiv = "/"
+private const val opPct = "%"
+private const val opEqual = "="
+
+// Dual: label text as well as used to build a numeric string from keystrokes
+private const val charDot = "."
+private const val char0 = "0"
+private const val char1 = "1"
+private const val char2 = "2"
+private const val char3 = "3"
+private const val char4 = "4"
+private const val char5 = "5"
+private const val char6 = "6"
+private const val char7 = "7"
+private const val char8 = "8"
+private const val char9 = "9"
+
+// Button Labels only
+private const val labelClear = "C"
+private const val labelPlusMinus = "\u00B1"
+private const val labelAdd = "\uFF0B"
+private const val labelSub = "\u2212"
+private const val labelMul = "\u2A09"
+private const val labelDiv = "\u00F7"
+
+private fun flipSign(arg: String): String {
+    if (arg.startsWith(uMinus)) {
+        return arg.substring(1)
+    } else if (arg != char0) {
+        return uMinus + arg
+    }
+    return arg
+}
+
+private fun condInsertDot(arg: String): String {
+    if (arg.length > 1 && !arg.contains(charDot)) {
+        return arg + charDot
+    }
+    return arg
+}
+
+private fun stripLeadingZero(arg: String): String {
+    if (arg.isNotEmpty() && arg.startsWith(char0)) {
+        return arg.substring(1)
+    }
+    return arg
+}
+
+@Suppress("DuplicatedCode")
 class DesktopView : View() {
     private var calcTextField: TextField by singleAssign()
-    private var expression: String = ""
-
-    private val controller = DesktopController()
-    private val opCodes = setOf("+", "-", "*", "/", "(", ")", "%", "%")
+    private val model = DesktopModel()
 
     override val root = vbox {
         addClass(Styles.wrapper)
 
         hbox {
-            calcTextField = textfield("0") {
+            calcTextField = textfield(char0) {
                 requestFocus()
 
-                textProperty().addListener { evt, _, _ ->
-                    println(evt.value)
-                }
+//                textProperty().addListener { evt, _, _ ->
+//                    println(evt.value)
+//                }
 
                 alignmentProperty().set(Pos.CENTER_RIGHT)
 
@@ -31,7 +82,7 @@ class DesktopView : View() {
             }
         }
         hbox {
-            button("C") {
+            button(labelClear) {
                 style {
                     backgroundColor += Styles.operationBgDarkColor
                 }
@@ -39,131 +90,128 @@ class DesktopView : View() {
                     resetCalculator()
                 }
             }
-            button("\u00B1") {
+            button(labelPlusMinus) {
                 style {
                     backgroundColor += Styles.operationBgDarkColor
                 }
                 action {
-                    accept("uminus")
+                    calcTextField.text = flipSign(calcTextField.text)
                 }
             }
-            button("%") {
+            button(opPct) {
                 style {
                     fontSize = 28.px
                     backgroundColor += Styles.operationBgDarkColor
                 }
                 action {
-                    accept("%")
+                    calcTextField.text = model.calc(opPct, calcTextField.text)
                 }
             }
-            button("\u00F7") {
+            button(labelDiv) {
                 style {
                     backgroundColor += Styles.operationBgColor
                 }
                 action {
-                    accept("/")
+                    calcTextField.text = model.calc(opDiv, calcTextField.text)
                 }
             }
         }
         hbox {
-            button("7") {
+            button(char7) {
                 action {
-                    accept("7")
+                    calcTextField.text = model.accumulate(char7, calcTextField.text)
                 }
             }
-            button("8") {
+            button(char8) {
 
                 action {
-                    accept("8")
+                    calcTextField.text = model.accumulate(char8, calcTextField.text)
                 }
             }
-            button("9") {
+            button(char9) {
                 action {
-                    accept("9")
+                    calcTextField.text = model.accumulate(char9, calcTextField.text)
                 }
             }
-            button("\u2A09") {
+            button(labelMul) {
                 style {
                     backgroundColor += Styles.operationBgColor
                 }
                 action {
-                    accept("+")
+                    calcTextField.text = model.calc(opMul, calcTextField.text)
                 }
             }
         }
         hbox {
-            button("4") {
+            button(char4) {
                 action {
-                    accept("4")
+                    calcTextField.text = model.accumulate(char4, calcTextField.text)
                 }
             }
-            button("5") {
+            button(char5) {
                 action {
-                    accept("5")
+                    calcTextField.text = model.accumulate(char5, calcTextField.text)
                 }
             }
-            button("6") {
+            button(char6) {
                 action {
-                    accept("6")
+                    calcTextField.text = model.accumulate(char6, calcTextField.text)
                 }
             }
-            button("\u2212") {
-                // -
+            button(labelSub) {
                 style {
                     backgroundColor += Styles.operationBgColor
                 }
                 action {
-                    accept("-")
+                    calcTextField.text = model.calc(opSub, calcTextField.text)
                 }
             }
         }
         hbox {
-            button("1") {
+            button(char1) {
                 action {
-                    accept("1")
+                    calcTextField.text = model.accumulate(char1, calcTextField.text)
                 }
             }
-            button("2") {
+            button(char2) {
                 action {
-                    accept("2")
+                    calcTextField.text = model.accumulate(char2, calcTextField.text)
                 }
             }
-            button("3") {
+            button(char3) {
                 action {
-                    accept("3")
+                    calcTextField.text = model.accumulate(char3, calcTextField.text)
                 }
             }
-            button("\uFF0B") {
-                // +
+            button(labelAdd) {
                 style {
                     backgroundColor += Styles.operationBgColor
                 }
                 action {
-                    accept("+")
+                    calcTextField.text = model.calc(opAdd, calcTextField.text)
                 }
             }
         }
         hbox {
-            button("0") {
+            button(char0) {
                 style {
                     minWidth = 168.px
                 }
                 action {
-                    accept("0")
+                    calcTextField.text += char0
                 }
             }
-            button(".") {
+            button(charDot) {
                 action {
-                    accept(".")
+                    calcTextField.text = condInsertDot(calcTextField.text)
                 }
             }
-            button("=") {
+            button(opEqual) {
                 style {
                     backgroundColor += Styles.operationBgColor
                 }
                 action {
-                    calcTextField.text = controller.evalEpression(expression).toString()
-                    expression = calcTextField.text
+                    calcTextField.text = model.calc(opEqual, calcTextField.text)
                 }
             }
         }
@@ -179,30 +227,65 @@ class DesktopView : View() {
     }
 
     private fun resetCalculator() {
-        expression = ""
         calcTextField.text = "0"
+        model.reset()
     }
 
-    private fun accept(arg: String) {
-        expression += arg
-
-        if (calcTextField.text == "0") {
-            calcTextField.text = ""
-        }
-        if (!opCodes.contains(arg)) {
-            calcTextField.text += arg
-        } else {
-            calcTextField.text = ""
-        }
-    }
 }
 
-class DesktopController : Controller() {
+class DesktopModel {
 
-    fun evalEpression(inputValue: String): Double {
-        // TODO: Carry out real operation. Add op to signature?
+    private var left: String = char0
+    private var laggingOp = ""
+    private val validOps = setOf<String>(opAdd, opDiv, opMul, opPct, opSub)
 
-        return (inputValue).toDouble() - (inputValue).toDouble()
+    fun reset() {
+        left = char0
+        laggingOp = ""
+    }
+
+    fun calc(operator: String, right: String): String {
+        println("before: " + left)
+
+        var work = left.toDouble()
+
+
+        // This could be a map impl instead
+        if (laggingOp == opAdd) {
+            work += right.toDouble()
+        }
+        if (laggingOp == opSub) {
+            work -= right.toDouble()
+        }
+        if (laggingOp == opMul) {
+            work *= right.toDouble()
+        }
+        if (laggingOp == opMul) {
+            work /= right.toDouble()
+        }
+        if (laggingOp == opPct) {
+            work *= right.toDouble()*0.01
+        }
+
+        if (operator == opEqual) {
+            work = right.toDouble()
+        }
+
+        if (validOps.contains(operator)){
+            laggingOp = operator
+        }
+
+        left = work.toString()
+        println("after: " + left)
+        return left
+    }
+
+    fun accumulate(aChar: String, str: String): String {
+        if (laggingOp != "") {
+            laggingOp = ""
+            return aChar
+        }
+        return stripLeadingZero(str) + aChar
     }
 }
 
