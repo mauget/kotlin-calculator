@@ -69,7 +69,7 @@ class DesktopView : View() {
                     backgroundColor += Styles.operationBgDarkColor
                 }
                 action {
-                    calcTextField.text = controller.calc(opPct, calcTextField.text)
+                    calcTextField.text = controller.calc(opPct)
                 }
             }
             button(labelDiv) {
@@ -77,7 +77,7 @@ class DesktopView : View() {
                     backgroundColor += Styles.operationBgColor
                 }
                 action {
-                    calcTextField.text = controller.calc(opDiv, calcTextField.text)
+                    calcTextField.text = controller.calc(opDiv)
                 }
             }
         }
@@ -103,7 +103,7 @@ class DesktopView : View() {
                     backgroundColor += Styles.operationBgColor
                 }
                 action {
-                    calcTextField.text = controller.calc(opMul, calcTextField.text)
+                    calcTextField.text = controller.calc(opMul)
                 }
             }
         }
@@ -128,7 +128,7 @@ class DesktopView : View() {
                     backgroundColor += Styles.operationBgColor
                 }
                 action {
-                    calcTextField.text = controller.calc(opSub, calcTextField.text)
+                    calcTextField.text = controller.calc(opSub)
                 }
             }
         }
@@ -153,7 +153,7 @@ class DesktopView : View() {
                     backgroundColor += Styles.operationBgColor
                 }
                 action {
-                    calcTextField.text = controller.calc(opAdd, calcTextField.text)
+                    calcTextField.text = controller.calc(opAdd)
                 }
             }
         }
@@ -176,7 +176,7 @@ class DesktopView : View() {
                     backgroundColor += Styles.operationBgColor
                 }
                 action {
-                    calcTextField.text = controller.calc(opEqu, calcTextField.text)
+                    calcTextField.text = controller.calc(opEqu)
                 }
             }
         }
@@ -206,8 +206,8 @@ class DesktopController : Controller() {
         return engine.reset()
     }
 
-    fun calc(operator: String, right: String): String {
-        return engine.calc(operator, right)
+    fun calc(operator: String): String {
+        return engine.calc(operator)
     }
 
     fun accumulate(aChar: String): String {
