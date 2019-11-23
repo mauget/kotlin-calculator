@@ -7,11 +7,11 @@ class CalculatorEngine {
         private const val percentFactor = 0.01
 
         private val evalMap: Map<String, (Double, Double) -> Double> = hashMapOf(
-            opAdd to { l, r -> l + r },
-            opSub to { l, r -> l - r },
-            opMul to { l, r -> l * r },
-            opDiv to { l, r -> l / r },
-            opPct to { l, r -> l + r * percentFactor },
+            opAdd to { l, r -> r + l },
+            opSub to { l, r -> r - l},
+            opMul to { l, r -> r * l },
+            opDiv to { l, r -> r / l },
+            opPct to { l, r -> r + l * percentFactor },
             opNop to { l, _ -> l }
         )
 
@@ -59,12 +59,11 @@ class CalculatorEngine {
         println("evaluated $left $this $right to $result")
 
         // 2. If inbound operator is not "=", push inbound operator
-        //    else push noOp, a "0" arg, and push result arg from
+        //    else push noOp, and push result arg from
         if (inboundOperator != opEqu) {
             opStack.push(inboundOperator)
         } else {
             opStack.push(opNop)
-            argStack.push(char0)
         }
         // 3 Always push result last (top of arg stack)
         argStack.push(result)
@@ -78,16 +77,13 @@ class CalculatorEngine {
 
     fun accumulate(aChar: String): String {
         if (isNewOp) {
-//            println("accumulate: arg stack before encountering new op is $argStack")
-
-            argStack.push(aChar)
             isNewOp = false
-//            println("accumulate: arg stack after encountering new op is $argStack")
+            argStack.push(aChar)
         } else {
             argStack.push(stripLeadingZero(argStack.pop() + aChar))
         }
-//        println("accumulate: arg stack at return is $argStack")
-//        println("accumulate: op stack at return is $opStack")
+        println("accumulate: arg stack at return is $argStack")
+        println("accumulate: op stack at return is $opStack")
         return argStack.peek()
     }
 

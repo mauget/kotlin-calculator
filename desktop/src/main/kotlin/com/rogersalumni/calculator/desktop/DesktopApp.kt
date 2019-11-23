@@ -31,7 +31,7 @@ class DesktopView : View() {
         addClass(Styles.wrapper)
 
         hbox {
-            calcTextField = textfield(char0) {
+            calcTextField = textfield(resetCalculator()) {
                 requestFocus()
 
 //                textProperty().addListener { evt, _, _ ->
@@ -163,7 +163,7 @@ class DesktopView : View() {
                     minWidth = 168.px
                 }
                 action {
-                    calcTextField.text += char0
+                    calcTextField.text += controller.accumulate(char0)
                 }
             }
             button(charDot) {
@@ -190,7 +190,7 @@ class DesktopView : View() {
     }
 
     private fun resetCalculator(): String {
-        return controller.reset();
+        return controller.reset()
     }
 
 }
